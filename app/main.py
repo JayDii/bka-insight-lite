@@ -64,18 +64,19 @@ def analyze_logic(text: str) -> dict:
 
 ## ENDPOINTS
 
-# simple testing endpoint
+# health testing endpoint
 @app.get("/health")
-def read_root():
-    return {"status": "Backend läuft", "system": "BKA-InSight"}
+def health_check():
+    return {"status": "healthy", "system": "bka-insight-backend"}
 
 # analyse endpoint (aktuell dummy)
-@app.post("/analyze")
+@app.post("/analyze", response_model=AnalysisResponse)
 def analyze_report(request: ReportRequest):
     # TODO add AI endpoint
-    return {
-        "message": "Report empfangen",
-        "received_lenght": len(request.text),
-        "alert": False
-    }
+    if not request.text:
+        raise HTTPException(status_code=400, detail="Bericht darf nicht leer sein.")
+    
+    result = analyze_logic(request.text)
+
+    return result
 
