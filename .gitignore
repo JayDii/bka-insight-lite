@@ -1,0 +1,16 @@
+# Virtuelle Umgebung
+venv/
+.venv/
+.env
+
+# Python Bytecode
+__pycache__/
+*.pyc
+
+# Betriebssystem-Dateien
+.DS_Store
+Thumbs.db
+
+# IDE Einstellungen
+.vscode/
+.idea/
