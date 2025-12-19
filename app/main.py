@@ -35,69 +35,75 @@ class AnalysisResponse(BaseModel):
 
 # Business Logic
 def analyze_logic(text: str) -> dict:
-    """Transformer (mDeBERTa) basierte Text Analyse"""
-
-
-    # Input Validierung: Kurze Text führen mit hoher wahrscheinlichkeit zu halluzinationen.
+    """
+    veto-Logik: Safety First.
+    Sobald eine 'Red Flag' erkannt wird, ist das Risiko HOCH
+    """
+    
     if len(text.strip()) < 10:
         return {
             "timestamp": datetime.datetime.now().isoformat(),
             "risk_level": "NIEDRIG",
             "detected_entities": [],
-            "summary": "Hinweis: Eingabetext ist zu kurz für eine verlässliche KI-Analyse (min. 10 Zeichen).",
+            "summary": "Text zu kurz.",
             "raw_length": len(text)
         }
 
-
-    ## Kandiaten, Kontexte die Relevant sein können in einem Bericht
-    labels = ["Gefahr für Leib und Leben", "Waffengebrauch", "Drogenkriminalität", "Routineeinsatz", "Friedlich"]
-
-    ## KI Anfrage
+    # Labels: Wir brauchen ein Label, das genau auf deinen Text passt (Bedrohung)
+    labels = [
+        "Bedrohung mit Waffen",       # (Red Flag)
+        "Körperverletzung",           # (Red Flag)
+        "Amoklage oder Terror",       # (Red Flag)
+        "Einbruch oder Diebstahl",    # (Yellow Flag)
+        "Vandalismus",                # (Yellow Flag)
+        "Verkehrsdelikt",             # (Green Flag)
+        "Ruhestörung / Streit",       # (Green Flag)
+        "Friedlich / Routine"         # (Green Flag)
+    ]
+    
+    # Wir lassen multi_label=True, damit er Waffe UND Bedrohung gleichzeitig erkennen kann
     result = classifier(text, labels, multi_label=True)
-
-    # 3. Ergebnisse auswerten
-    # result['scores'] und result['labels'] enthalten die Wahrscheinlichkeiten
     
     detected_entities = []
-    risk_score = 0
     
-    # Mapping für Risiko-Berechnung (Label -> Punkte)
-    risk_map = {
-        "Gefahr für Leib und Leben": 2,
-        "Waffengebrauch": 2,
-        "Drogenkriminalität": 1,
-        "Routineeinsatz": 0,
-        "Friedlich": 0
-    }
+    # Definition der Gefahrenklassen
+    red_flags = ["Bedrohung mit Waffen", "Körperverletzung", "Amoklage oder Terror"]
+    yellow_flags = ["Einbruch oder Diebstahl", "Vandalismus"]
+    
+    current_risk = "NIEDRIG"
+    trigger_label = "Keine Gefahr"
 
-    # Betrachte alle keywords mit score über 50%
+    # Wir prüfen die Ergebnisse
     for label, score in zip(result['labels'], result['scores']):
-        if score > 0.5:
-            percent = int(score * 100)
-            detected_entities.append(Entity(category="Kategorie", value=f"{label} ({percent}%)"))
+        
+        percent = int(score * 100)
+        
+        # Nur anzeigen, wenn relevant
+        if score > 0.3:
+            detected_entities.append(Entity(category="Detektion", value=f"{label} ({percent}%)"))
 
-            # Risiko Bewerten
-            risk_score += risk_map.get(label, 0)
+        # ---  VETO LOGIK ---
+        
+        # 1. Höchste Priorität: RED FLAGS
+        if label in red_flags and score > 0.40:
+            current_risk = "HOCH"
+            trigger_label = label
+            # Wir brechen hier nicht ab, wollen aber sicherstellen, dass HOCH bleibt
+            
+        # 2. Mittlere Priorität: YELLOW FLAGS
+        elif label in yellow_flags and score > 0.50 and current_risk != "HOCH":
+            current_risk = "MITTEL"
+            trigger_label = label
 
-    # Risiko-Level bestimmen  
-    if risk_score >= 2:
-        risk_level = "HOCH"
-    elif risk_score == 1:
-        risk_level = "MITTEL"
-    else:
-       risk_level = "NIEDRIG"
-    
-    summary = f"KI-Scan abgeschlossen. Relevante Themen: {[e.value for e in detected_entities]}"
+    summary_text = f"Einstufung durch Trigger: '{trigger_label}'."
 
     return {
         "timestamp": datetime.datetime.now().isoformat(),
-        "risk_level": risk_level,
+        "risk_level": current_risk,
         "detected_entities": detected_entities,
-        "summary": summary,
+        "summary": summary_text,
         "raw_length": len(text)
     }
-
-
 # ENDPOINTS
 
 ## health testing endpoint
