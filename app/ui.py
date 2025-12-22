@@ -11,8 +11,11 @@ BACKEND_URL = "http://127.0.0.1:8000/analyze"
 
 st.set_page_config(page_title="BKA-InSight Light", page_icon="🕵️‍♂️", layout="wide")
 
+# --- Session State für Textfeld initialisieren ---
+if 'report_text' not in st.session_state:
+    st.session_state['report_text'] = ""
 
-st.title("🕵️ BKA-InSight Lite: Berichts-Analyse")
+st.title("BKA-InSight Lite: Berichts-Analyse")
 st.markdown("---")
 
 # Layout
@@ -23,10 +26,39 @@ col_input, col_output = st.columns([1,1])
 
 with col_input:
     st.subheader("📝 Eingabe Polizeibericht")
+
+    # Beispiel-Buttons
+    st.markdown("Schnellwahl (Demo-Szenarien):")
+    btn_col1, btn_col2, btn_col3 = st.columns(3)
+    
+    if btn_col1.button("🔴 Akute Bedrohung"):
+        st.session_state['report_text'] = (
+            "Am heutigen Nachmittag gingen mehrere Notrufe ein. Eine männliche Person "
+            "attackierte Passanten am Bahnhofsvorplatz verbal und bedrohte sie mit einem "
+            "ca. 20 cm langen Messer. Der Verdächtige verhielt sich hochaggressiv."
+        )
+    
+    if btn_col2.button("🟡 Einbruch"):
+        st.session_state['report_text'] = (
+            "In der Nacht löste die Alarmanlage eines Elektronikmarktes aus. "
+            "Vor Ort wurde ein aufgehebeltes Fenster festgestellt. "
+            "Zwei dunkel gekleidete Personen flohen vermutlich mit einem Kombi vom Tatort."
+        )
+        
+    if btn_col3.button("🟢 Harmlos / Kontext"):
+        st.session_state['report_text'] = (
+            "Zwei Jugendliche mit Kapuzen wurden im Baumarkt gemeldet, die sich dort "
+            "auffällig verhielten. Bei der Kontrolle stellte sich heraus, dass sie "
+            "lediglich Halloween-Kostüme anprobierten und spielten. Keine Straftat."
+        )
+
+    # Textfeld (Verknüpft mit Session State)
     input_text = st.text_area(
-        "Bitte Bericht hier einfügen",
+        "Fügen Sie hier den Berichtstext ein:",
         height=300,
-        placeholder="Beispiel: Der Folgende Tathergang wurde vom Zeugen beschrieben...")
+        placeholder="Beispiel: Am Tatort wurde eine Waffe gefunden...",
+        key="report_text" # <--- Das verbindet das Feld mit den Buttons
+    )
     
     analyze_btn = st.button("🔍 Bericht analysieren", type="primary")
 
