@@ -1,5 +1,6 @@
 import streamlit as st
 import requests
+import time
 import json
 
 
@@ -9,6 +10,7 @@ import json
 BACKEND_URL = "http://127.0.0.1:8000/analyze"
 
 st.set_page_config(page_title="BKA-InSight Light", page_icon="🕵️‍♂️", layout="wide")
+
 
 st.title("🕵️ BKA-InSight Lite: Berichts-Analyse")
 st.markdown("---")
@@ -70,7 +72,7 @@ with col_output:
                     if entities:
                         # Entities als Tags anzeigen
                         for entity in entities:
-                            st.code(f"{entity['category']}: {entity["value"]}")
+                            st.code(f"{entity['category']}: {entity['value']}")
                     else:
                         st.caption("Keine spezifischen Indikatoren gefunden.")
 
