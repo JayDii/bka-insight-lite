@@ -7,7 +7,8 @@ pinned: false
 app_port: 7860
 ---
 
-# BKA InSight Lite
+ BKA InSight Lite
+
 Eine Applikation zur einfachen Analyse von Polizeiberichten.
 
 Front- und Backend sind hier als ein einziger Container gebundelt.

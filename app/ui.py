@@ -72,6 +72,8 @@ with col_output:
         if not input_text.strip():
             st.warning("Bitte fügen sie den Bericht zuerst ein.")
         else:
+            # Langsam auf Free Tier Warnung
+            st.info("ℹ️ Hinweis: Da dieser Prototyp auf einer kostenlosen CPU-Cloud-Instanz läuft, kann die Analyse wenige Minuten dauern. Bitte haben Sie einen Moment Geduld.")
             # Ladebalken
             st.spinner("KI analysiert den Bericht...")
             try:
