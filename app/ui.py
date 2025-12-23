@@ -9,13 +9,13 @@ import json
 # In der Cloud Umgebung dann mit Umgebungsvariablen
 BACKEND_URL = "http://127.0.0.1:8000/analyze"
 
-st.set_page_config(page_title="BKA-InSight Light", page_icon="🕵️‍♂️", layout="wide")
+st.set_page_config(page_title="InSight Light", page_icon="🕵️‍♂️", layout="wide")
 
 # --- Session State für Textfeld initialisieren ---
 if 'report_text' not in st.session_state:
     st.session_state['report_text'] = ""
 
-st.title("BKA-InSight Lite: Berichts-Analyse")
+st.title("InSight Lite: Berichts-Analyse")
 st.markdown("---")
 
 # Layout

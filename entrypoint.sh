@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Beide Dienste in einem Container starten
+# Beide Dienste in einem Container startens
 
 # 1. Backend im Hintergrund starten 
 # Auf 127.0.0.1, damit es nur innerhalb des Containers erreichbar ist.

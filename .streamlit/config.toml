@@ -8,5 +8,5 @@ toolbarMode = "viewer"  # Versteckt Dev Menü
 showErrorDetails = false # Versteckt technische Fehler-Stacks vor dem User
 
 [theme]
-base = "light"           # Erzwingt helles Design 
+base = "light"           # Erzwingt helles Design s
 primaryColor = "#1C4E80" # "Polizei-Blau" für Buttons

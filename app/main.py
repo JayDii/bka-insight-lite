@@ -12,7 +12,7 @@ classifier = pipeline("zero-shot-classification", model="MoritzLaurer/mDeBERTa-v
 
 # Initialize
 app = FastAPI(
-    title="BKA-InSight Lite Backend",
+    title="InSight Lite Backend",
     description="Backend Service zur Analyse von Polizeiberichten.",
     version="0.1.0"
               )
@@ -109,7 +109,7 @@ def analyze_logic(text: str) -> dict:
 ## health testing endpoint
 @app.get("/health")
 def health_check():
-    return {"status": "healthy", "system": "bka-insight-backend"}
+    return {"status": "healthy", "system": "insight-backend"}
 
 ## analyse endpoint (aktuell dummy)
 @app.post("/analyze", response_model=AnalysisResponse)
